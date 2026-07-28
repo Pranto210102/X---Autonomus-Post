@@ -1,0 +1,34 @@
+name: Daily Autonomous X Post
+
+on:
+  schedule:
+    # Trigger at 09:00 UTC every day
+    - cron: '0 9 * * *'
+  # Allows manual triggering from the GitHub UI for testing
+  workflow_dispatch:
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Project Dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers & Linux System Dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Execute Autonomous Agent
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          X_AUTH_STATE: ${{ secrets.X_AUTH_STATE }}
+        run: node agent.js

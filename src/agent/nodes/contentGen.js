@@ -1,8 +1,8 @@
 // Generate content for the X.com post using Gemini API Key
 
 import {GoogleGenAI} from "@google/genai";
-import {logger} from "../../utils/logger.js";
-import {CONFIG} from "../../config/constants.js";
+import { CONFIG } from "../../config/constants.js";
+import { logger } from "../../utils/logger.js";
 import dotenv from "dotenv";
 
 dotenv.config();

@@ -2,19 +2,28 @@ import { Annotation } from "@langchain/langgraph";
 
 export const AgentState = Annotation.Root({
 
-  // Playwright page
+  // Playwright page instance
   page: Annotation(),
 
   // Generated X post
   tweetContent: Annotation(),
 
-  // UI element the agent currently wants
+  // Current objective
   targetElement: Annotation(),
 
-  // Selector currently being tried
+  // Selector currently being used
   activeSelector: Annotation(),
 
-  // Number of recovery attempts
+  // css | xpath
+  selectorType: Annotation(),
+
+  // DOM recovery status
+  recovered: Annotation(),
+
+  // Final validation status
+  isPosted: Annotation(),
+
+  // Retry count
   retryCount: Annotation({
     reducer: (current, update) =>
       update !== undefined ? update : current,
@@ -22,9 +31,9 @@ export const AgentState = Annotation.Root({
     default: () => 0
   }),
 
-  // Result of latest action
+  // Latest node execution status
   success: Annotation(),
 
-  // Latest error
+  // Latest error message
   error: Annotation()
 });

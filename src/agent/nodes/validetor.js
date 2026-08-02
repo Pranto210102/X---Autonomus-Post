@@ -6,20 +6,29 @@ export async function validatorNode(state) {
   const page = state.page;
 
   try {
-    // Wait for network response/DOM update confirming post placement
+    // Wait for the UI to settle before checking for the published tweet.
     await page.waitForTimeout(4000);
-    
-    // Check if composer has closed or post appears
+
+    const tweetContent = state.tweetContent?.trim();
     const composerVisible = await page.isVisible(CONFIG.FALLBACK_SELECTORS.composer).catch(() => false);
+    const publishedTweetCount = tweetContent
+      ? await page.locator(CONFIG.FALLBACK_SELECTORS.timeline_tweet)
+          .filter({ hasText: tweetContent })
+          .count()
+      : 0;
     
-    if (!composerVisible) {
+    if (publishedTweetCount > 0) {
       logger.info("Validation confirmed: Tweet posted successfully!");
       return { isPosted: true, lastError: null };
     } else {
-      throw new Error("Composer interface still visible after post submission.");
+      throw new Error(
+        composerVisible
+          ? "No published tweet matching the generated content was found."
+          : "Composer closed, but no published tweet matching the generated content was found."
+      );
     }
   } catch (err) {
     logger.warn(`Validation failed: ${err.message}`);
-    return { lastError: err.message };
+    return { isPosted: false, lastError: err.message };
   }
 }

@@ -2,8 +2,8 @@ name: Daily Autonomous X Post
 
 on:
   schedule:
-    # Trigger at 09:00 UTC every day
-    - cron: '0 9 * * *'
+    # Trigger at 15:30 UTC every day, which is 9:30 PM in Bangladesh (UTC+6)
+    - cron: '30 15 * * *'
   # Allows manual triggering from the GitHub UI for testing
   workflow_dispatch:
 

@@ -31,7 +31,7 @@ export function createWorkflow() {
       "validation",
       (state) => {
         // Case A: Tweet verified successfully -> Route to email report
-        if (state.isPosted) {
+          if (state.isPosted === true) {
           return "emailNotifier";
         }
 

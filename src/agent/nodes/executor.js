@@ -62,7 +62,7 @@ export async function executorNode(state) {
     // 5. Click Post
     logger.info("Clicking Post button...");
 
-    // await postButton.click();
+    await postButton.click();
 
     logger.info("Post button clicked successfully.");
 

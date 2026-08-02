@@ -23,7 +23,7 @@ export async function emailNotifierNode(state) {
   });
 
   const timestamp = new Date().toISOString();
-  const isSuccess = state.isPosted;
+  const isSuccess = state.isPosted === true;
 
   // Construct Email Payload
   const subject = isSuccess

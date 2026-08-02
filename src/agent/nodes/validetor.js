@@ -6,6 +6,11 @@ export async function validatorNode(state) {
   const page = state.page;
 
   try {
+    if (state.success === false && state.error) {
+      logger.warn(`Validation skipped because executor already failed: ${state.error}`);
+      return { isPosted: false, lastError: state.error };
+    }
+
     // Wait for the UI to settle before checking for the published tweet.
     await page.waitForTimeout(4000);
 

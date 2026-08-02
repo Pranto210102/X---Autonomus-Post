@@ -31,7 +31,11 @@ export function createWorkflow() {
       "validation",
       (state) => {
         // Case A: Tweet verified successfully -> Route to email report
-          if (state.isPosted === true) {
+        if (state.isPosted === true) {
+          return "emailNotifier";
+        }
+
+        if (typeof state.lastError === "string" && /logged-out landing page|Refresh X_AUTH_STATE/i.test(state.lastError)) {
           return "emailNotifier";
         }
 

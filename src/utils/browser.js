@@ -52,6 +52,12 @@ export async function createBrowser() {
   const browserContext = await browser.newContext(contextOptions);
   const page = await browserContext.newPage();
 
+  page.on("framenavigated", async (frame) => {
+    if (frame === page.mainFrame()) {
+      logger.info(`[Browser] Navigated to: ${frame.url()}`);
+    }
+  });
+
   logger.info("Browser session successfully instantiated.");
 
   return {

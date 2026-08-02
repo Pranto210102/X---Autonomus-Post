@@ -25,12 +25,23 @@ export async function executorNode(state) {
       timeout: CONFIG.DEFAULT_TIMEOUT
     });
 
+    logger.info(`Current page URL: ${page.url()}`);
+    logger.info(`Current page title: ${(await page.title().catch(() => "<unavailable>"))}`);
+
+    const landingChecks = await Promise.all([
+      page.getByText("Happening now").isVisible().catch(() => false),
+      page.getByRole("link", { name: /Sign in/i }).isVisible().catch(() => false),
+      page.url().includes("/i/flow/login")
+    ]);
+
+    if (landingChecks.some(Boolean)) {
+      throw new Error("X opened the logged-out landing page instead of the authenticated home feed. Refresh X_AUTH_STATE with a current logged-in session.");
+    }
+
     // 2. Find composer
     logger.info("Finding composer...");
 
-    const composer = page.locator(
-      CONFIG.FALLBACK_SELECTORS.composer
-    );
+    const composer = page.locator(CONFIG.FALLBACK_SELECTORS.composer);
 
     await composer.waitFor({
       state: "visible",
@@ -45,9 +56,7 @@ export async function executorNode(state) {
     // 4. Find Post button
     logger.info("Finding Post button...");
 
-    const postButton = page.locator(
-      CONFIG.FALLBACK_SELECTORS.post_button
-    );
+    const postButton = page.locator(CONFIG.FALLBACK_SELECTORS.post_button);
 
     await postButton.waitFor({
       state: "visible",

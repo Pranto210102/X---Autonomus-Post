@@ -35,16 +35,24 @@ export function createWorkflow() {
           return "emailNotifier";
         }
 
-        if (typeof state.lastError === "string" && /logged-out landing page|Refresh X_AUTH_STATE/i.test(state.lastError)) {
+        const combinedError = `${state.error || ""}\n${state.lastError || ""}`;
+
+        // Case B: Non-recoverable auth/session issue -> Route to failure email report
+        if (/UNAUTHENTICATED_X_SESSION|logged-out landing page/i.test(combinedError)) {
           return "emailNotifier";
         }
 
-        // Case B: Exhausted retry budget -> Route to failure email report
+        // Case C: Composer not found repeatedly is usually an auth/session failure in CI
+        if (/tweetTextarea_0|waiting for locator/i.test(combinedError)) {
+          return "emailNotifier";
+        }
+
+        // Case D: Exhausted retry budget -> Route to failure email report
         if (state.retryCount >= CONFIG.MAX_RETRIES) {
           return "emailNotifier";
         }
 
-        // Case C: Recoverable failure -> Trigger vision inspection
+        // Case E: Recoverable failure -> Trigger vision inspection
         return "domRecovery";
       },
       // Explicit Mapping Dictionary 
